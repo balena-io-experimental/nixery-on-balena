@@ -1,0 +1,21 @@
+version: "2"
+
+services:
+  nixery:
+    build: .
+    ports:
+      - 80:8080
+    environment:
+      - PORT=8080
+      - NIXERY_CHANNEL=nixos-unstable
+      - NIXERY_STORAGE_BACKEND=filesystem
+      - STORAGE_PATH=/storage
+      - NIX_TIMEOUT=120
+
+  hostname:
+    build: hostname
+    restart: no
+    labels:
+      io.balena.features.supervisor-api: 1
+    environment:
+      SET_HOSTNAME: nixery
