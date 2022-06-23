@@ -7,10 +7,24 @@ services:
       - 80:8080
     environment:
       - PORT=8080
-      - NIXERY_CHANNEL=nixos-unstable
+      - NIXERY_CHANNEL=e0a42267f73ea52adc061a64650fddc59906fc99 # nixpkgs-unstable
       - NIXERY_STORAGE_BACKEND=filesystem
       - STORAGE_PATH=/storage
-      - NIX_TIMEOUT=120
+      - NIX_TIMEOUT=600 # 10 min
+    volumes:
+      - nix:/nix/store
+      - storage:/storage
+    tmpfs:
+      - /tmp
+
+  qemu-user-static:
+    image: multiarch/qemu-user-static:7.0.0-7
+    command:
+      - "--reset"
+      - "-p"
+      - "yes"
+    privileged: true
+    restart: no
 
   hostname:
     build: hostname
@@ -19,3 +33,7 @@ services:
       io.balena.features.supervisor-api: 1
     environment:
       SET_HOSTNAME: nixery
+
+volumes:
+  nix:
+  storage:
